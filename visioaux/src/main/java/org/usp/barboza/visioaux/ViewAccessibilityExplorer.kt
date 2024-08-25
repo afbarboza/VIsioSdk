@@ -14,10 +14,10 @@ object ViewAccessibilityExplorer {
         /**
          * WARNING: THIS IS A REALLY BAD HEURISTIC TO AVOID STATE EXPLOSION. THIS SHALL BE IMPROVED
          */
-        /* if (viewWasAlreadyExplored(view)) {
+        if (viewWasAlreadyExplored(view)) {
             return
         }
-        markViewAsExplored(view) */
+        markViewAsExplored(view)
 
         if (view == null) {
             return
