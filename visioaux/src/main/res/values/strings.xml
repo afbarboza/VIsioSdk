@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="service_name">VisioAux</string>
+    <string name="service_summary">VisioAux Accessibility Service</string>
+    <string name="service_description">Detects accessibility violations during runtime</string>
+</resources>
