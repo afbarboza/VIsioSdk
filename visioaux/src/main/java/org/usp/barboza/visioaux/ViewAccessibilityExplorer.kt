@@ -19,29 +19,26 @@ object ViewAccessibilityExplorer {
         }
         markViewAsExplored(view)
 
-        if (view == null) {
-            return
-        }
-
         VisioAuxAccessibilityValidator()
             .check(view)
 
-        val logs  = VisioAuxLogReport
-            .getInstance()
-            .logMessage
-
-        for (log in logs) {
-            accessibilityLog(log)
-        }
-
-        accessibilityLog("Found ${logs.size} errors or warnings in the app for the current view")
-
         val checks = VisioAuxLogReport
             .getInstance()
-            .checks
+            .reports
 
+        val deviceId = VisioAuxViewListener.deviceId
+        val activityName = VisioAuxViewListener.activityName
+
+        accessibilityLog("Found ${checks.size} errors or warnings in the app for the current view")
         for (check in checks) {
-            debugLog("Capture check of type $check")
+            debugLog(">>> (${deviceId ?: "null"}) $activityName: ${check.check.category}: ${check.violationLogMessage} ")
+
+            /* TODO fill in those info here */
+            val violationType = check.check.category.toString()
+            val developerMessage = check.violationLogMessage
+            // val conformanceLevel = ...
+
+            //
         }
 
         accessibilityLog("====================================\n\n\n\n\n\n")
@@ -49,7 +46,7 @@ object ViewAccessibilityExplorer {
 
     private fun viewWasAlreadyExplored(view: View): Boolean {
         val wasExplored = exploredViews[view]
-        return wasExplored != null && wasExplored == true
+        return wasExplored == true
     }
 
     private fun markViewAsExplored(view: View) {

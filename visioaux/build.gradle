@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlinx.serialization.plugin)
 }
 
 android {
@@ -37,7 +38,10 @@ dependencies {
     implementation libs.material
 
     /* VisioATF dependency */
-    implementation libs.visio.atf
+    implementation(libs.atf.visio.aux)
+
+    /* KotlinX serialization */
+    implementation(libs.kotlinx.serialization)
 
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
