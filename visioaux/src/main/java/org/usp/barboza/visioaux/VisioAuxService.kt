@@ -40,6 +40,7 @@ class VisioAuxService : AccessibilityService() {
 
         if (nodeWasAlreadyExplored(node)) {
             /* The accessibility of this node was already checked, silently give up */
+            debugLog(">>> ANI node marked as explored. Returning...")
             return
         }
 

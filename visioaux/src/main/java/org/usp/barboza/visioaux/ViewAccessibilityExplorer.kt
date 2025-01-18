@@ -15,6 +15,7 @@ object ViewAccessibilityExplorer {
          * WARNING: THIS IS A REALLY BAD HEURISTIC TO AVOID STATE EXPLOSION. THIS SHALL BE IMPROVED
          */
         if (viewWasAlreadyExplored(view)) {
+            debugLog(">>> View marked as explored. Returning...")
             return
         }
         markViewAsExplored(view)
@@ -40,6 +41,10 @@ object ViewAccessibilityExplorer {
 
             //
         }
+
+        VisioAuxLogReport
+            .getInstance()
+            .clearAllReports()
 
         accessibilityLog("====================================\n\n\n\n\n\n")
     }
