@@ -23,8 +23,6 @@ object VisioAuxViewListener {
 
         activityName = screenName
         this.deviceId = deviceId
-
-        collectAccessibilityReport(rootView)
     }
 
     fun unregisterForAccessibilityEvents() {
