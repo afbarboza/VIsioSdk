@@ -6,6 +6,10 @@ import com.google.android.apps.common.testing.accessibility.framework.integratio
 import org.usp.barboza.visioaux.VisioAuxHelper.accessibilityLog
 import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
 import java.util.Hashtable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+
 
 object ViewAccessibilityExplorer {
     private val exploredViews = Hashtable<View, Boolean>(200)
@@ -37,9 +41,17 @@ object ViewAccessibilityExplorer {
             /* TODO fill in those info here */
             val violationType = check.check.category.toString()
             val developerMessage = check.violationLogMessage
-            // val conformanceLevel = ...
+            val conformanceLevel = check.check.conformanceLevel
 
-            //
+            val newViolation = Violation(
+                violationType = violationType,
+                activityName = activityName ?: "",
+                conformanceLevel = conformanceLevel,
+                developerMessage = developerMessage,
+                deviceId = deviceId
+            )
+
+            debugLog(Json.encodeToString(newViolation))
         }
 
         VisioAuxLogReport
