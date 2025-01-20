@@ -11,7 +11,6 @@ import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
 import java.util.Hashtable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
-import org.usp.barboza.visioaux.https.TmpMessage
 import org.usp.barboza.visioaux.https.ViolationRepository
 
 
@@ -77,9 +76,7 @@ object ViewAccessibilityExplorer {
     private fun reportViolation(violation: Violation) {
         CoroutineScope(Dispatchers.IO).launch {
             val repository = ViolationRepository()
-            val message = Json.encodeToString(violation)
-
-            repository.reportViolation(TmpMessage(message))
+            repository.reportViolation(violation)
         }
     }
 }

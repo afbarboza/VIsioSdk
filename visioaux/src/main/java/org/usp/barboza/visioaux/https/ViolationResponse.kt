@@ -5,5 +5,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ViolationResponse(
     val id: Int,
-    val message: String
+    val violationType: String,
+    val activityName: String,
+    val conformanceLevel: String,
+    val developerMessage: String,
+    val deviceId: String? = ""
 )
