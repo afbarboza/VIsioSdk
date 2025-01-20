@@ -15,7 +15,7 @@ import org.usp.barboza.visioaux.https.ViolationRepository
 
 
 object ViewAccessibilityExplorer {
-    private val exploredViews = Hashtable<View, Boolean>(200)
+    private val exploredViews = Hashtable<String, Boolean>(200)
 
     fun collectAccessibilityReport(view: View) {
         /**
@@ -64,13 +64,14 @@ object ViewAccessibilityExplorer {
     }
 
     private fun viewWasAlreadyExplored(view: View): Boolean {
-        val wasExplored = exploredViews[view]
+        val rootView = view.rootView
+        val wasExplored = exploredViews[rootView.toString()]
         return wasExplored == true
     }
 
     private fun markViewAsExplored(view: View) {
         val rootView = view.rootView
-        exploredViews[rootView] = true
+        exploredViews[rootView.toString()] = true
     }
 
     private fun reportViolation(violation: Violation) {

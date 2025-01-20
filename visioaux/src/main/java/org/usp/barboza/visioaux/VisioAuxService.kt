@@ -22,6 +22,7 @@ class VisioAuxService : AccessibilityService() {
         }
 
         if (shouldIgnoreEvent(event)) {
+            debugLog("Accessibility event should be ignored. Silently give up")
             return
         }
 

@@ -7,8 +7,7 @@ object VisioAuxHelper {
     private val ACCESSIBILITY_TAG = "VisioAuxLog"
 
     fun shouldIgnoreEvent(accessibilityEvent: AccessibilityEvent?): Boolean {
-        /* For now, all events will be considered important for accessibility */
-        return false
+        return accessibilityEvent?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
     }
 
     fun debugLog(message: String) {
