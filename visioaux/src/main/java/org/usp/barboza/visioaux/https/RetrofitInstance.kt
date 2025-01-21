@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     private var retrofitInstance: Retrofit? = null
 
-    const val BASE_URL: String = "https://239a-2001-818-dccc-5b00-5cd4-3eef-413-4345.ngrok-free.app/api/"
+    const val BASE_URL: String = "https://136f-2001-818-dccc-5b00-8107-7c5b-bc4b-6313.ngrok-free.app/api/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
         this.level = HttpLoggingInterceptor.Level.BODY
@@ -33,7 +33,7 @@ object RetrofitInstance {
             retrofitInstance = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
-                .addConverterFactory(Json.asConverterFactory(contentType)) // should add it at last
+                .addConverterFactory(jsonSerde.asConverterFactory(contentType)) // should add it at last
                 .build()
         }
 
