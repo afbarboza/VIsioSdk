@@ -21,10 +21,10 @@ class VisioAuxService : AccessibilityService() {
             return
         }
 
-        if (shouldIgnoreEvent(event)) {
+        /* if (shouldIgnoreEvent(event)) {
             debugLog("Accessibility event should be ignored. Silently give up")
             return
-        }
+        } */
 
         val root = event?.source
         exploreAccessibilityNode(root)
@@ -39,14 +39,14 @@ class VisioAuxService : AccessibilityService() {
             return
         }
 
-        if (nodeWasAlreadyExplored(node)) {
+        /* if (nodeWasAlreadyExplored(node)) {
             /* The accessibility of this node was already checked, silently give up */
             debugLog(">>> ANI node marked as explored. Returning...")
             return
         }
 
         /* For further reference, the node must be marked as explored */
-        markNodeAsExplored(node)
+        markNodeAsExplored(node) */
 
         /* Actually check the accessibility */
         probeAccessibility(node)

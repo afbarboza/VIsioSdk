@@ -5,29 +5,31 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
 
     private lateinit var deviceId: String
+    private lateinit var accessibilityEvaluationScheduler: Job
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         deviceId = getDeviceId(activity) ?: createDeviceId(activity)
+
+        initAccessibilityEvaluationScheduler(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
     }
 
-    override fun onActivityResumed(activity: Activity) {
-        val rootView = activity.window.decorView.rootView
-        VisioAuxViewListener
-            .registerForAccessibilityEvents(rootView, activity.javaClass.name, deviceId)
-    }
+    override fun onActivityResumed(activity: Activity) {}
 
-    override fun onActivityPaused(activity: Activity) {
-        VisioAuxViewListener
-            .unregisterForAccessibilityEvents()
-    }
+    override fun onActivityPaused(activity: Activity) {}
 
     override fun onActivityStopped(activity: Activity) {
     }
@@ -36,6 +38,11 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+        accessibilityEvaluationScheduler.cancel()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            accessibilityEvaluationScheduler.join()
+        }
     }
 
     private fun getDeviceId(context: Context): String? {
@@ -61,5 +68,22 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
 
     private fun generatedeviceId(): String {
         return "${UUID.randomUUID()}${System.currentTimeMillis()}"
+    }
+
+    private fun initAccessibilityEvaluationScheduler(currentActivity: Activity) {
+        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.Main).launch {
+            while (true) {
+                val rootView = currentActivity.window.decorView.rootView
+                VisioAuxViewListener
+                    .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
+
+                delay(3000)
+            }
+        }
+
+        accessibilityEvaluationScheduler.invokeOnCompletion {
+            VisioAuxViewListener
+                .unregisterForAccessibilityEvents()
+        }
     }
 }

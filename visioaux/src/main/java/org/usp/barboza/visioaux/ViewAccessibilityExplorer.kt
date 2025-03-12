@@ -21,11 +21,12 @@ object ViewAccessibilityExplorer {
         /**
          * WARNING: THIS IS A REALLY BAD HEURISTIC TO AVOID STATE EXPLOSION. THIS SHALL BE IMPROVED
          */
-        if (viewWasAlreadyExplored(view)) {
+        /* if (viewWasAlreadyExplored(view)) {
             debugLog(">>> View marked as explored. Returning...")
             return
         }
-        markViewAsExplored(view)
+
+        markViewAsExplored(view) */
 
         VisioAuxAccessibilityValidator()
             .check(view)
@@ -53,7 +54,7 @@ object ViewAccessibilityExplorer {
                 deviceId = deviceId
             )
 
-            reportViolation(newViolation)
+            // reportViolation(newViolation)
         }
 
         VisioAuxLogReport
