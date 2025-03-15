@@ -11,6 +11,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.usp.barboza.visioaux.VisioAuxHelper.accessibilityLog
 import java.util.UUID
 
 class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
@@ -40,7 +41,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     override fun onActivityDestroyed(activity: Activity) {
         accessibilityEvaluationScheduler.cancel()
 
-        CoroutineScope(Dispatchers.Main).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             accessibilityEvaluationScheduler.join()
         }
     }
@@ -71,7 +72,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     private fun initAccessibilityEvaluationScheduler(currentActivity: Activity) {
-        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.Main).launch {
+        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.IO).launch {
             while (true) {
                 val rootView = currentActivity.window.decorView.rootView
                 VisioAuxViewListener
@@ -82,6 +83,8 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
         }
 
         accessibilityEvaluationScheduler.invokeOnCompletion {
+            accessibilityLog("Canceling coroutine...")
+
             VisioAuxViewListener
                 .unregisterForAccessibilityEvents()
         }
