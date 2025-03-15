@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -28,7 +29,9 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     override fun onActivityStarted(activity: Activity) {
     }
 
-    override fun onActivityResumed(activity: Activity) {}
+    override fun onActivityResumed(activity: Activity) {
+        accessibilityEvaluationScheduler.start()
+    }
 
     override fun onActivityPaused(activity: Activity) {}
 
@@ -72,13 +75,16 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     private fun initAccessibilityEvaluationScheduler(currentActivity: Activity) {
-        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.IO).launch {
+        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.IO)
+            .launch(
+                start = CoroutineStart.LAZY
+            ) {
             while (true) {
+                delay(3000)
                 val rootView = currentActivity.window.decorView.rootView
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
-                delay(3000)
             }
         }
 
