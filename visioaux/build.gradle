@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlinx.serialization.plugin)
+    id("maven-publish")
 }
 
 android {
@@ -52,4 +53,33 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.androidx.junit
     androidTestImplementation libs.androidx.espresso.core
+}
+
+def homeDirectory = System.properties['user.home']
+def localMavenDirectory = "/.m2/repository/" /* Change this if your local maven is in a different directory */
+def visioSdkGroupId = 'org.usp.barboza.visioaux'
+def visioSdkArtifactId = 'visio-sdk'
+def versionName = "0.0.1-local"
+def debugSuffix = "-debug"
+def releaseSuffix = "-release"
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            //from components.android
+            groupId visioSdkGroupId
+            artifactId visioSdkArtifactId
+            version versionName + debugSuffix
+
+            afterEvaluate {
+                from components.debug
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url homeDirectory + localMavenDirectory
+        }
+    }
 }
