@@ -22,14 +22,13 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         deviceId = getDeviceId(activity) ?: createDeviceId(activity)
-
-        initAccessibilityEvaluationScheduler(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
     }
 
     override fun onActivityResumed(activity: Activity) {
+        initAccessibilityEvaluationScheduler(activity)
         accessibilityEvaluationScheduler.start()
     }
 
@@ -75,16 +74,22 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     private fun initAccessibilityEvaluationScheduler(currentActivity: Activity) {
-        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.IO)
+        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.Main)
             .launch(
                 start = CoroutineStart.LAZY
             ) {
             while (true) {
-                delay(3000)
                 val rootView = currentActivity.window.decorView.rootView
+                if (rootView == null) {
+                    throw RuntimeException("Uncapable of RECORD root view as a valid view for lifecyle tracker!")
+                } else {
+                    accessibilityLog("Successfully recording current root view ")
+                }
+
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
+                delay(5000)
             }
         }
 

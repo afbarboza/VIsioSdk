@@ -36,4 +36,8 @@ object VisioAuxViewListener {
     fun getViewFromAccessibilityEvent(viewId: Int): View? {
         return wrRootView?.get()?.rootView?.findViewById(viewId)
     }
+
+    fun getRootviewAsFallback(): View? {
+        return wrRootView?.get()?.rootView
+    }
 }

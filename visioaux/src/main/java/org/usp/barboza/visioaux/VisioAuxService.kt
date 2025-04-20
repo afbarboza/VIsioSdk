@@ -75,10 +75,17 @@ class VisioAuxService : AccessibilityService() {
         }
 
         showNodeDetails(node)
-        val view = getViewDetails(node)
+        var view = getViewDetails(node)
 
         if (view != null) {
             collectAccessibilityReport(view)
+        } else {
+            view = VisioAuxViewListener.getRootviewAsFallback()
+            if (view == null) {
+                throw RuntimeException("Uncapable of getting root view")
+            } else {
+                collectAccessibilityReport(view)
+            }
         }
     }
 
