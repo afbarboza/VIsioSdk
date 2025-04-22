@@ -5,6 +5,7 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
+import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +19,14 @@ import java.util.UUID
 class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
 
     private lateinit var deviceId: String
+    private lateinit var rootView: View
     private lateinit var accessibilityEvaluationScheduler: Job
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         deviceId = getDeviceId(activity) ?: createDeviceId(activity)
+        rootView = activity.window.decorView.rootView
+        VisioAuxViewListener
+            .registerForAccessibilityEvents(rootView, activity.javaClass.name, deviceId)
     }
 
     override fun onActivityStarted(activity: Activity) {
@@ -74,12 +79,12 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     private fun initAccessibilityEvaluationScheduler(currentActivity: Activity) {
-        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.Main)
+        accessibilityEvaluationScheduler = CoroutineScope(Dispatchers.IO)
             .launch(
                 start = CoroutineStart.LAZY
             ) {
             while (true) {
-                val rootView = currentActivity.window.decorView.rootView
+                rootView = currentActivity.window.decorView.rootView
                 if (rootView == null) {
                     throw RuntimeException("Uncapable of RECORD root view as a valid view for lifecyle tracker!")
                 } else {
@@ -89,7 +94,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
-                delay(5000)
+                delay(1500)
             }
         }
 
