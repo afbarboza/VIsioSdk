@@ -24,20 +24,24 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         deviceId = getDeviceId(activity) ?: createDeviceId(activity)
-        rootView = activity.window.decorView.rootView
-        VisioAuxViewListener
-            .registerForAccessibilityEvents(rootView, activity.javaClass.name, deviceId)
     }
 
     override fun onActivityStarted(activity: Activity) {
     }
 
     override fun onActivityResumed(activity: Activity) {
+        rootView = activity.window.decorView.rootView
         initAccessibilityEvaluationScheduler(activity)
         accessibilityEvaluationScheduler.start()
     }
 
-    override fun onActivityPaused(activity: Activity) {}
+    override fun onActivityPaused(activity: Activity) {
+        accessibilityEvaluationScheduler.cancel()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            accessibilityEvaluationScheduler.join()
+        }
+    }
 
     override fun onActivityStopped(activity: Activity) {
     }
@@ -46,11 +50,6 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        accessibilityEvaluationScheduler.cancel()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            accessibilityEvaluationScheduler.join()
-        }
     }
 
     private fun getDeviceId(context: Context): String? {
@@ -94,7 +93,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
-                delay(1500)
+                delay(3000)
             }
         }
 

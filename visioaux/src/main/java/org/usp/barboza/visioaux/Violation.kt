@@ -9,4 +9,5 @@ data class Violation(
     val conformanceLevel: String,
     val developerMessage: String,
     val deviceId: String? = ""
+    // xpath (para identificar univocamente o widget)
 )

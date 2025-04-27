@@ -54,7 +54,7 @@ object ViewAccessibilityExplorer {
                 deviceId = deviceId
             )
 
-            // reportViolation(newViolation)
+            reportViolation(newViolation)
         }
 
         VisioAuxLogReport
