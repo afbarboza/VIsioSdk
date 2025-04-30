@@ -26,7 +26,6 @@ object VisioAuxViewListener {
     }
 
     fun unregisterForAccessibilityEvents() {
-        activityName = ""
         VisioAuxLogReport
             .getInstance()
             .clearAllReports()

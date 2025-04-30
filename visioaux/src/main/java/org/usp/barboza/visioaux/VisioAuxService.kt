@@ -1,30 +1,19 @@
 package org.usp.barboza.visioaux
 
 import android.accessibilityservice.AccessibilityService
-import android.os.Build
 import android.view.View
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import org.usp.barboza.visioaux.ViewAccessibilityExplorer.collectAccessibilityReport
 import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
-import org.usp.barboza.visioaux.VisioAuxHelper.shouldIgnoreEvent
-import java.util.Hashtable
 
 class VisioAuxService : AccessibilityService() {
-
-    private val exploredNodes = Hashtable<AccessibilityNodeInfo, Boolean>(200)
-
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         val packageSource = event?.packageName ?: ""
         if (packageSource != applicationContext.packageName) {
             return
         }
-
-        /* if (shouldIgnoreEvent(event)) {
-            debugLog("Accessibility event should be ignored. Silently give up")
-            return
-        } */
 
         val root = event?.source
         exploreAccessibilityNode(root)
@@ -39,40 +28,11 @@ class VisioAuxService : AccessibilityService() {
             return
         }
 
-        /* if (nodeWasAlreadyExplored(node)) {
-            /* The accessibility of this node was already checked, silently give up */
-            debugLog(">>> ANI node marked as explored. Returning...")
-            return
-        }
-
-        /* For further reference, the node must be marked as explored */
-        markNodeAsExplored(node) */
-
         /* Actually check the accessibility */
         probeAccessibility(node)
-
-        /* Recursively explores the subtree */
-        val nodeDegree = node.childCount
-        for (i in 0..(nodeDegree - 1)) {
-            exploreAccessibilityNode(node.getChild(i))
-        }
-    }
-
-    private fun nodeWasAlreadyExplored(node: AccessibilityNodeInfo): Boolean {
-        val wasExplored = exploredNodes[node]
-        return wasExplored ?: false
-    }
-
-    private fun markNodeAsExplored(node: AccessibilityNodeInfo) {
-        exploredNodes[node] = true
     }
 
     private fun probeAccessibility(node: AccessibilityNodeInfo) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            if (!node.isImportantForAccessibility) {
-                return
-            }
-        }
 
         showNodeDetails(node)
         var view = getViewDetails(node)

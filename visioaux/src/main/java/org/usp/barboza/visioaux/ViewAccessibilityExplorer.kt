@@ -15,19 +15,8 @@ import org.usp.barboza.visioaux.https.ViolationRepository
 
 
 object ViewAccessibilityExplorer {
-    private val exploredViews = Hashtable<String, Boolean>(200)
 
     fun collectAccessibilityReport(view: View) {
-        /**
-         * WARNING: THIS IS A REALLY BAD HEURISTIC TO AVOID STATE EXPLOSION. THIS SHALL BE IMPROVED
-         */
-        /* if (viewWasAlreadyExplored(view)) {
-            debugLog(">>> View marked as explored. Returning...")
-            return
-        }
-
-        markViewAsExplored(view) */
-
         VisioAuxAccessibilityValidator()
             .check(view)
 
@@ -62,17 +51,6 @@ object ViewAccessibilityExplorer {
             .clearAllReports()
 
         accessibilityLog("====================================\n\n\n\n\n\n")
-    }
-
-    private fun viewWasAlreadyExplored(view: View): Boolean {
-        val rootView = view.rootView
-        val wasExplored = exploredViews[rootView.toString()]
-        return wasExplored == true
-    }
-
-    private fun markViewAsExplored(view: View) {
-        val rootView = view.rootView
-        exploredViews[rootView.toString()] = true
     }
 
     private fun reportViolation(violation: Violation) {
