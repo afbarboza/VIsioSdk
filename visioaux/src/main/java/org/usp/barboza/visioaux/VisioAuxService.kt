@@ -16,6 +16,7 @@ class VisioAuxService : AccessibilityService() {
         }
 
         val root = event?.source
+        root?.refresh()
         exploreAccessibilityNode(root)
     }
 

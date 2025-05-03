@@ -93,6 +93,9 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
+                ViewAccessibilityExplorer
+                    .collectAccessibilityReport(rootView)
+
                 delay(3000)
             }
         }
