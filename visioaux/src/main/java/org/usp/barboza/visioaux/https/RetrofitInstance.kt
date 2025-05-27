@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     private var retrofitInstance: Retrofit? = null
 
-    const val BASE_URL: String = "https://0386-2001-818-dccc-5b00-c197-3adf-28-857b.ngrok-free.app/api/"
+    const val BASE_URL: String = "https://2aae-2001-818-dccc-5b00-e953-4cff-75fb-29a3.ngrok-free.app/api/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
         this.level = HttpLoggingInterceptor.Level.BODY

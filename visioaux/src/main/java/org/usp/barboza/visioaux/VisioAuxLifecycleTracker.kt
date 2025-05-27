@@ -5,6 +5,7 @@ import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -93,8 +94,18 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
-                ViewAccessibilityExplorer
-                    .collectAccessibilityReport(rootView)
+                val allRoots = getAllRootViews()
+                accessibilityLog("$$$ We should probe at least ${allRoots.size}")
+
+                for (currentRoot in allRoots) {
+                    try {
+                        ViewAccessibilityExplorer
+                            .collectAccessibilityReport(currentRoot)
+                    } catch (e: Exception) {
+                        Log.e("VisioAuxError", "Error while trying to probe for View")
+                    }
+
+                }
 
                 delay(3000)
             }
@@ -106,5 +117,32 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
             VisioAuxViewListener
                 .unregisterForAccessibilityEvents()
         }
+    }
+
+
+    fun getAllRootViews(): List<View> {
+        val rootViews = mutableListOf<View>()
+
+        try {
+            val wmGlobalClass = Class.forName("android.view.WindowManagerGlobal")
+            val getInstanceMethod = wmGlobalClass.getMethod("getInstance")
+            val wmGlobalInstance = getInstanceMethod.invoke(null)
+
+            // Get view names (needed to access root views in Android 11+)
+            val getViewRootNamesMethod = wmGlobalClass.getMethod("getViewRootNames")
+            val viewRootNames = getViewRootNamesMethod.invoke(wmGlobalInstance) as Array<String>
+
+            val getRootViewMethod = wmGlobalClass.getMethod("getRootView", String::class.java)
+
+            for (name in viewRootNames) {
+                val rootView = getRootViewMethod.invoke(wmGlobalInstance, name) as View
+                rootViews.add(rootView)
+            }
+
+        } catch (e: Exception) {
+            accessibilityLog("Failed to get root views")
+        }
+
+        return rootViews
     }
 }

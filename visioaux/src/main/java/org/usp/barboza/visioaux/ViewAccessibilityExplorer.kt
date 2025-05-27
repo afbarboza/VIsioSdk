@@ -18,6 +18,8 @@ object ViewAccessibilityExplorer {
 
     fun collectAccessibilityReport(view: View) {
         VisioAuxAccessibilityValidator()
+            .setCaptureScreenshots(true)
+            .setRunChecksFromRootView(true)
             .check(view)
 
         val checks = VisioAuxLogReport
