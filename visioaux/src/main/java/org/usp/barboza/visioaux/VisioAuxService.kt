@@ -43,7 +43,7 @@ class VisioAuxService : AccessibilityService() {
         } else {
             view = VisioAuxViewListener.getRootviewAsFallback()
             if (view == null) {
-                throw RuntimeException("Uncapable of getting root view")
+                debugLog("Uncapable of getting root view. Halting accessibility report")
             } else {
                 collectAccessibilityReport(view)
             }

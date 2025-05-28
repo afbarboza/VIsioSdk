@@ -35,8 +35,8 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
+        rootView = activity.window.decorView.rootView
         if (VisioAuxServiceChecker.isVisioAuxRuntimePermissionGranted(activity)) {
-            rootView = activity.window.decorView.rootView
             initAccessibilityEvaluationScheduler(activity)
             accessibilityEvaluationScheduler.start()
         }
@@ -93,7 +93,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
             while (true) {
                 rootView = currentActivity.window.decorView.rootView
                 if (rootView == null) {
-                    error("Uncapable of record root view as a valid view for lifecyle tracker!")
+                    debugLog("Uncapable of record root view as a valid view for lifecyle tracker!")
                 }
 
                 VisioAuxViewListener
