@@ -4,9 +4,12 @@ import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.PermissionChecker
+import androidx.core.content.PermissionChecker.checkSelfPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +18,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.usp.barboza.visioaux.VisioAuxHelper.accessibilityLog
+import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
 import java.util.UUID
 
 class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
@@ -31,16 +35,19 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(activity: Activity) {
-        rootView = activity.window.decorView.rootView
-        initAccessibilityEvaluationScheduler(activity)
-        accessibilityEvaluationScheduler.start()
+        if (VisioAuxServiceChecker.isVisioAuxRuntimePermissionGranted(activity)) {
+            rootView = activity.window.decorView.rootView
+            initAccessibilityEvaluationScheduler(activity)
+            accessibilityEvaluationScheduler.start()
+        }
     }
 
     override fun onActivityPaused(activity: Activity) {
-        accessibilityEvaluationScheduler.cancel()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            accessibilityEvaluationScheduler.join()
+        if (VisioAuxServiceChecker.isVisioAuxRuntimePermissionGranted(activity)) {
+            accessibilityEvaluationScheduler.cancel()
+            CoroutineScope(Dispatchers.IO).launch {
+                accessibilityEvaluationScheduler.join()
+            }
         }
     }
 
@@ -86,25 +93,20 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
             while (true) {
                 rootView = currentActivity.window.decorView.rootView
                 if (rootView == null) {
-                    throw RuntimeException("Uncapable of RECORD root view as a valid view for lifecyle tracker!")
-                } else {
-                    accessibilityLog("Successfully recording current root view ")
+                    error("Uncapable of record root view as a valid view for lifecyle tracker!")
                 }
 
                 VisioAuxViewListener
                     .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
                 val allRoots = getAllRootViews()
-                accessibilityLog("$$$ We should probe at least ${allRoots.size}")
-
                 for (currentRoot in allRoots) {
                     try {
                         ViewAccessibilityExplorer
                             .collectAccessibilityReport(currentRoot)
                     } catch (e: Exception) {
-                        Log.e("VisioAuxError", "Error while trying to probe for View")
+                        debugLog("Error while trying to probe for View")
                     }
-
                 }
 
                 delay(3000)
@@ -112,8 +114,6 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
         }
 
         accessibilityEvaluationScheduler.invokeOnCompletion {
-            accessibilityLog("Canceling coroutine...")
-
             VisioAuxViewListener
                 .unregisterForAccessibilityEvents()
         }
@@ -140,7 +140,7 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
             }
 
         } catch (e: Exception) {
-            accessibilityLog("Failed to get root views")
+            debugLog("Failed to get root views")
         }
 
         return rootViews
