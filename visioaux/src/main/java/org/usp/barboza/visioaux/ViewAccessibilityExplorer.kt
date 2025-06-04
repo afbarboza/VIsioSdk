@@ -28,6 +28,7 @@ object ViewAccessibilityExplorer {
 
         val deviceId = VisioAuxViewListener.deviceId
         val activityName = VisioAuxViewListener.activityName
+        val packageName = view.context.packageName
 
         accessibilityLog("Found ${checks.size} errors or warnings in the app for the current view")
         for (check in checks) {
@@ -45,7 +46,7 @@ object ViewAccessibilityExplorer {
                 deviceId = deviceId
             )
 
-            reportViolation(newViolation)
+            reportViolation(packageName, newViolation)
         }
 
         VisioAuxLogReport
@@ -55,10 +56,10 @@ object ViewAccessibilityExplorer {
         accessibilityLog("====================================\n\n\n\n\n\n")
     }
 
-    private fun reportViolation(violation: Violation) {
+    private fun reportViolation(appId: String, violation: Violation) {
         CoroutineScope(Dispatchers.IO).launch {
             val repository = ViolationRepository()
-            repository.reportViolation(violation)
+            repository.reportViolation(appId, violation)
         }
     }
 }

@@ -7,5 +7,8 @@ class ViolationRepository {
         .getRetrofit()
         .create(ViolationService::class.java)
 
-    suspend fun reportViolation(violation: Violation) = violationService.sendViolation(violation)
+    suspend fun reportViolation(
+        appId: String,
+        violation: Violation
+    ) = violationService.sendViolation(appId, violation)
 }
