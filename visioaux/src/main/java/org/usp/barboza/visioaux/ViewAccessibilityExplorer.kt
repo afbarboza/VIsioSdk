@@ -8,9 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.usp.barboza.visioaux.VisioAuxHelper.accessibilityLog
 import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
-import java.util.Hashtable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
 import org.usp.barboza.visioaux.https.ViolationRepository
 
 

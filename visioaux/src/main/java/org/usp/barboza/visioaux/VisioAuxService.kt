@@ -2,6 +2,7 @@ package org.usp.barboza.visioaux
 
 import android.accessibilityservice.AccessibilityService
 import android.view.View
+import android.view.View.NO_ID
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import org.usp.barboza.visioaux.ViewAccessibilityExplorer.collectAccessibilityReport
@@ -78,7 +79,7 @@ class VisioAuxService : AccessibilityService() {
 
         val viewId = resources.getIdentifier(viewResourceName, null, null)
 
-        if (viewId == 0) {
+        if (viewId == NO_ID) {
             debugLog("Unable to capture current view id")
             return null
         }

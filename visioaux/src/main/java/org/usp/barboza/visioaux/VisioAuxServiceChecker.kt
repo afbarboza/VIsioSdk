@@ -3,7 +3,6 @@ package org.usp.barboza.visioaux
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Context
 import android.view.accessibility.AccessibilityManager
-import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
 
 object VisioAuxServiceChecker {
     /**
