@@ -9,11 +9,11 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val REQUEST_TIMEOUT: Long = 30
+    private const val REQUEST_TIMEOUT: Long = 300
 
     private var retrofitInstance: Retrofit? = null
 
-    const val BASE_URL: String = "https://1e08-2001-818-dccc-5b00-762c-b2dc-e765-ac7a.ngrok-free.app/api/"
+    const val BASE_URL: String = "https://c00b0e306bfe.ngrok-free.app/api/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
         this.level = HttpLoggingInterceptor.Level.BODY
@@ -21,9 +21,9 @@ object RetrofitInstance {
 
     private val client = OkHttpClient.Builder().apply {
         this.addInterceptor(interceptor)
-            .connectTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
+            .writeTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
     }.build()
 
     fun getRetrofit(): Retrofit {

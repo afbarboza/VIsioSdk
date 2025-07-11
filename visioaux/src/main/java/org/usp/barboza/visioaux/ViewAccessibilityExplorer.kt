@@ -14,43 +14,49 @@ import org.usp.barboza.visioaux.https.ViolationRepository
 object ViewAccessibilityExplorer {
 
     fun collectAccessibilityReport(view: View) {
-        VisioAuxAccessibilityValidator()
-            .setCaptureScreenshots(true)
-            .setRunChecksFromRootView(true)
-            .check(view)
+        try {
+            VisioAuxAccessibilityValidator()
+                .setCaptureScreenshots(true)
+                .setRunChecksFromRootView(true)
+                .check(view)
 
-        val checks = VisioAuxLogReport
-            .getInstance()
-            .reports
+            val checks = VisioAuxLogReport
+                .getInstance()
+                .reports
 
-        val deviceId = VisioAuxViewListener.deviceId
-        val activityName = VisioAuxViewListener.activityName
-        val packageName = view.context.packageName
+            val deviceId = VisioAuxViewListener.deviceId
+            val activityName = VisioAuxViewListener.activityName
+            val packageName = view.context.packageName
 
-        accessibilityLog("Found ${checks.size} errors or warnings in the app for the current view")
-        for (check in checks) {
-            debugLog(">>> (${deviceId ?: "null"}) $activityName: ${check.check.category}: ${check.violationLogMessage} ")
+            accessibilityLog("Found ${checks.size} errors or warnings in the app for the current view")
 
-            val violationType = check.check.category.toString()
-            val developerMessage = check.violationLogMessage
-            val conformanceLevel = check.check.conformanceLevel
 
-            val newViolation = Violation(
-                violationType = violationType,
-                activityName = activityName ?: "",
-                conformanceLevel = conformanceLevel,
-                developerMessage = developerMessage,
-                deviceId = deviceId
-            )
+            for (check in checks) {
+                debugLog(">>> (${deviceId ?: "null"}) $activityName: ${check.check.category}: ${check.violationLogMessage} ")
 
-            reportViolation(packageName, newViolation)
+                val violationType = check.check.category.toString()
+                val developerMessage = check.violationLogMessage
+                val conformanceLevel = check.check.conformanceLevel
+
+                val newViolation = Violation(
+                    violationType = violationType,
+                    activityName = activityName ?: "",
+                    conformanceLevel = conformanceLevel,
+                    developerMessage = developerMessage,
+                    deviceId = deviceId
+                )
+
+                reportViolation(packageName, newViolation)
+            }
+
+            VisioAuxLogReport
+                .getInstance()
+                .clearAllReports()
+
+            accessibilityLog("====================================\n\n\n\n\n\n")
+        } catch (e: Exception) {
+            debugLog("VisioAux caught exception: ${e::class.simpleName}")
         }
-
-        VisioAuxLogReport
-            .getInstance()
-            .clearAllReports()
-
-        accessibilityLog("====================================\n\n\n\n\n\n")
     }
 
     private fun reportViolation(appId: String, violation: Violation) {
