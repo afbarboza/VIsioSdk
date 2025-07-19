@@ -94,10 +94,14 @@ class VisioAuxLifecycleTracker : ActivityLifecycleCallbacks {
                 rootView = currentActivity.window.decorView.rootView
                 if (rootView == null) {
                     debugLog("Uncapable of record root view as a valid view for lifecyle tracker!")
-                }
+                    continue
+                } else {
+                    VisioAuxViewListener
+                        .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
 
-                VisioAuxViewListener
-                    .registerForAccessibilityEvents(rootView, currentActivity.javaClass.name, deviceId)
+                    ViewAccessibilityExplorer
+                        .collectAccessibilityReport(rootView)
+                }
 
                 val allRoots = getAllRootViews()
                 for (currentRoot in allRoots) {

@@ -13,7 +13,7 @@ object RetrofitInstance {
 
     private var retrofitInstance: Retrofit? = null
 
-    const val BASE_URL: String = "https://c00b0e306bfe.ngrok-free.app/api/"
+    const val BASE_URL: String = "https://050e839175ad.ngrok-free.app/api/"
 
     private val interceptor = HttpLoggingInterceptor().apply {
         this.level = HttpLoggingInterceptor.Level.BODY
@@ -21,9 +21,9 @@ object RetrofitInstance {
 
     private val client = OkHttpClient.Builder().apply {
         this.addInterceptor(interceptor)
-            .connectTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
-            .readTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
-            .writeTimeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
+            .connectTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
     }.build()
 
     fun getRetrofit(): Retrofit {

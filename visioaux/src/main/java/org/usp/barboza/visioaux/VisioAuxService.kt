@@ -5,6 +5,9 @@ import android.view.View
 import android.view.View.NO_ID
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.usp.barboza.visioaux.ViewAccessibilityExplorer.collectAccessibilityReport
 import org.usp.barboza.visioaux.VisioAuxHelper.debugLog
 
@@ -16,9 +19,13 @@ class VisioAuxService : AccessibilityService() {
             return
         }
 
-        val root = event?.source
-        root?.refresh()
-        exploreAccessibilityNode(root)
+        try {
+            val root = event?.source
+            exploreAccessibilityNode(root)
+        } catch (e: IndexOutOfBoundsException) {
+            debugLog("No source to inspect")
+        }
+
     }
 
     override fun onInterrupt() {
@@ -38,16 +45,23 @@ class VisioAuxService : AccessibilityService() {
 
         showNodeDetails(node)
         var view = getViewDetails(node)
+        node.recycle()
 
         if (view != null) {
-            collectAccessibilityReport(view)
+            triggerAccessibilityReportCollection(view)
         } else {
             view = VisioAuxViewListener.getRootviewAsFallback()
             if (view == null) {
                 debugLog("Uncapable of getting root view. Halting accessibility report")
             } else {
-                collectAccessibilityReport(view)
+                triggerAccessibilityReportCollection(view)
             }
+        }
+    }
+
+    private fun triggerAccessibilityReportCollection(view: View) {
+        CoroutineScope(Dispatchers.IO).launch {
+            collectAccessibilityReport(view)
         }
     }
 
